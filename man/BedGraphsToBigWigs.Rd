@@ -8,7 +8,7 @@ BedGraphsToBigWigs
 Converts bedGraphs into bigWigs. Must write files to an output directory.
 }
 \usage{
-BedGraphsToBigWigs(inputDir, outputDir, indexFile, bedGraphToBigWig = "bedGraphToBigWig")
+BedGraphsToBigWigs(inputDir, outputDir, chromSizes, bedGraphToBigWig = "bedGraphToBigWig")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -52,14 +52,14 @@ Returns nothing
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (inputDir, outputDir, indexFile, bedGraphToBigWig = "bedGraphToBigWig")
+function (inputDir, outputDir, chromSizes, bedGraphToBigWig = "bedGraphToBigWig")
 {
     dir.create(outputDir, showWarnings = FALSE)
     for (file in list.files(path = inputDir, pattern = "*.bedGraph",
         full.names = TRUE, recursive = FALSE)) {
         outputFile <- paste0(file.path(outputDir, tools::file_path_sans_ext(basename(file))),
             ".bigWig")
-        cmd <- paste(bedGraphToBigWig, file, indexFile, outputFile)
+        cmd <- paste(bedGraphToBigWig, file, chromSizes, outputFile)
         system(cmd)
     }
   }

@@ -5,10 +5,10 @@
 BigWigsToMatrix
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+For each bigWig file, averages scores across provided bins. Concatenates scores column-wise for each file into a single matrix.
 }
 \usage{
-BigWigsToMatrix(inputDir, binsFile, bigWigAverageOverBed = "bigWigAverageOverBed", column = 4, outputDir = NULL)
+BigWigsToMatrix(inputDir, binsFile, bigWigAverageOverBed = "bigWigAverageOverBed", column = 5, outputDir = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -56,7 +56,7 @@ BigWigsToMatrix returns a data.frame where each column corresponds to a bigWig f
 
 ## The function is currently defined as
 function (inputDir, binsFile, bigWigAverageOverBed = "bigWigAverageOverBed",
-    column = 4, outputDir = NULL)
+    column = 5, outputDir = NULL)
 {
     if (!is.null(outputDir)) {
         dir.create(outputDir, showWarnings = FALSE)

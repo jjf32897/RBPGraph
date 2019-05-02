@@ -45,6 +45,11 @@ Returns an m x n matrix, where the input was m x 2n. Adjacent pairs of columns a
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
+set.seed(100)
+
+x<-matrix(rnorm(50*10),ncol=10)
+x.merged <- MergeStrands(x)
+
 ## The function is currently defined as
 function (mat, fn = "mean")
 {

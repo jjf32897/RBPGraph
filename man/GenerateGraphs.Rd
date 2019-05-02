@@ -8,7 +8,7 @@ GenerateGraphs
 Generates and plots estimated partial correlation networks.
 }
 \usage{
-GenerateGraphs(data, lambdas, rbps)
+GenerateGraphs(data, lambdas, rbps, approx)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -91,6 +91,7 @@ function(data, lambdas, rbps, approx=FALSE) {
 	# rename for clarity
 	names(results.path)[4] <- "lambdas"
 	results.path
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
