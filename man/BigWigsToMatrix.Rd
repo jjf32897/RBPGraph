@@ -8,7 +8,8 @@ BigWigsToMatrix
 For each bigWig file, averages scores across provided bins. Concatenates scores column-wise for each file into a single matrix.
 }
 \usage{
-BigWigsToMatrix(inputDir, binsFile, bigWigAverageOverBed = "bigWigAverageOverBed", column = 5, outputDir = NULL)
+BigWigsToMatrix(inputDir, binsFile, bigWigAverageOverBed = "bigWigAverageOverBed",
+column = 5, outputDir = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

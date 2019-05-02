@@ -19,7 +19,8 @@ GenerateGraphs <- function(data, lambdas, rbps, approx=FALSE) {
 	for (i in 1:length(lambdas)) {
 		# convert estimated inverse-covariance matrix to weight matrix
 		results.path$graphs[,,i] <- as.matrix(qgraph::wi2net(results.path$wi[,,i]))
-		qgraph::qgraph(results.path$graphs[,,i], layout="spring", parallelEdge=TRUE, diag=FALSE, directed=FALSE, theme="colorblind", cut=0, title=results.path$rholist[i], labels=rbps)
+		qgraph::qgraph(results.path$graphs[,,i], layout="spring", parallelEdge=TRUE, diag=FALSE, directed=FALSE, theme="colorblind",
+			cut=0, title=results.path$rholist[i], labels=rbps)
 	}
 	# rename for clarity
 	names(results.path)[4] <- "lambdas"
