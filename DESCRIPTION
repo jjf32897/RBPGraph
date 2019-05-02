@@ -1,11 +1,10 @@
 Package: RBPGraph
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Estimates RBP Co-Binding from eCLIP Data Using Partial Correlation Networks
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Jo-Jo Feng
+Maintainer: The package maintainer <jo-jo.feng@yale.edu>
+Description: This package provides functions to convert from eCLIP narrowPeak files to matrices that can be used to estimate partial correlation coefficients between RBPs to identify potential co-binding partners. Together, these functions compose a streamlined workflow for generating networks direclty from eCLIP peak files. We also provide a flexible and easy-to-use framework to view and analyze the graphs.
+License:
 Encoding: UTF-8
 LazyData: true

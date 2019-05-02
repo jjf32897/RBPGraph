@@ -1,7 +1,5 @@
-# dependencies: glasso, data.table, qgraph, huge
-
-
-GenerateGraphs <- function(data, lambdas, rbps) {
+# Generates and plots estimated partial correlation networks for each provided lambda value
+GenerateGraphs <- function(data, lambdas, rbps, approx=FALSE) {
 	# perform non-paranormal transformation, cannot assume RBP data is normally distributed
 	data.npn <- huge::huge.npn(data)
 
@@ -9,7 +7,7 @@ GenerateGraphs <- function(data, lambdas, rbps) {
 	data.cor <- qgraph::cor_auto(data.npn)
 
 	# get graphs for each of the given lambdas
-	results.path <- glasso::glassopath(data.cor, rholist=lambdas, trace=0)
+	results.path <- glasso::glassopath(data.cor, rholist=lambdas, trace=0, approx=approx)
 
 	# set up the layout
 	h <- floor(sqrt(length(lambdas)))
@@ -23,12 +21,13 @@ GenerateGraphs <- function(data, lambdas, rbps) {
 		results.path$graphs[,,i] <- as.matrix(qgraph::wi2net(results.path$wi[,,i]))
 		qgraph::qgraph(results.path$graphs[,,i], layout="spring", parallelEdge=TRUE, diag=FALSE, directed=FALSE, theme="colorblind", cut=0, title=results.path$rholist[i], labels=rbps)
 	}
-
+	# rename for clarity
+	names(results.path)[4] <- "lambdas"
 	results.path
 }
 
-
-BigWigsToMatrix <- function(inputDir, binsFile, bigWigAverageOverBed="bigWigAverageOverBed", column=4, outputDir=NULL) {
+# Executes bigWigAverageOverBed
+BigWigsToMatrix <- function(inputDir, binsFile, bigWigAverageOverBed="bigWigAverageOverBed", column=5, outputDir=NULL) {
 	# create output directory if it doesn't exist, get temporary output directory if none given
 	if (!is.null(outputDir)) {
 		dir.create(outputDir, showWarnings=FALSE)
@@ -65,10 +64,8 @@ BigWigsToMatrix <- function(inputDir, binsFile, bigWigAverageOverBed="bigWigAver
 	mat
 }
 
-# BigWigsToMatrix("/ysm-gpfs/pi/gerstein/yf95/coregulation/final/bigwigs", "/ysm-gpfs/pi/gerstein/yf95/coregulation/annotations/bins/k562_regulome_hg38_100.bed", "/ysm-gpfs/pi/gerstein/from_louise/JZ435/bin/bigWigAverageOverBed")
-
 # Converts bedGraphs into bigWigs. Writes to an output directory, returns nothing.
-BedGraphsToBigWigs <- function(inputDir, outputDir, indexFile, bedGraphToBigWig="bedGraphToBigWig") {
+BedGraphsToBigWigs <- function(inputDir, outputDir, chromSizes, bedGraphToBigWig="bedGraphToBigWig") {
 	# attempt to create the output directory
 	dir.create(outputDir, showWarnings=FALSE)
 
@@ -76,19 +73,16 @@ BedGraphsToBigWigs <- function(inputDir, outputDir, indexFile, bedGraphToBigWig=
 	for (file in list.files(path=inputDir, pattern="*.bedGraph", full.names=TRUE, recursive=FALSE)) {
 		# run bedGraphToBigWig
 		outputFile <- paste0(file.path(outputDir, tools::file_path_sans_ext(basename(file))), '.bigWig')
-		cmd <- paste(bedGraphToBigWig, file, indexFile, outputFile)
+		cmd <- paste(bedGraphToBigWig, file, chromSizes, outputFile)
 		system(cmd)
 	}
 }
-
-# BedGraphsToBigWigs("/ysm-gpfs/pi/gerstein/yf95/coregulation/final/bedgraphs", "/ysm-gpfs/pi/gerstein/yf95/coregulation/final/bigwigs", "/ysm-gpfs/pi/gerstein/from_louise/JZ435/Data/binHg38/Homo_sapiens_assembly38.fasta.fai", "/ysm-gpfs/pi/gerstein/jjl86/RADAR_revision2/GERP/CADD/tools/bedGraphToBigWig")
-
 
 # Takes eCLIP peak files (BED format) and generates bedGraph files with the peaks and their specified scores.
 # Users can specify the quality threshold for the peaks, which column to use as the score, and also whether
 # to split strands. Writes to an output file, returns nothing.
 # Without splitting strands, you may have overlapping peaks, which is BAD!
-eCLIPToBedGraph <- function(inputDir, outputDir, column, qualityThreshold=1000, splitStrands=TRUE) {
+eCLIPToBedGraph <- function(inputDir, outputDir, column=7, qualityThreshold=1000, splitStrands=TRUE) {
 	for (file in list.files(path=inputDir, pattern="*.bed", full.names=TRUE, recursive=FALSE)) {
 		d <- data.table::fread(file, data.table=FALSE)
 		# get only the ch, start, stop, and column score for all peaks exceeding the quality threshold
@@ -109,8 +103,6 @@ eCLIPToBedGraph <- function(inputDir, outputDir, column, qualityThreshold=1000, 
 		}
 	}
 }
-
-# eCLIPToBedGraph("/ysm-gpfs/pi/gerstein/yf95/coregulation/final/eclips", "/ysm-gpfs/pi/gerstein/yf95/coregulation/final/bedgraphs", 7)
 
 # If matrix formed from files where + and - strands were split, they need to be merged. Assuming adjacent columns
 # are from the same RBP, we merge adjacent columns, either by taking the average or summing.
